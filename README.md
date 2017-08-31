@@ -1,6 +1,7 @@
 # Gigax74
 
-**TODO: Add description**
+The project has a number of functions and utilities that support running a D&D game using the 1974 rules.
+
 
 ## Installation
 
