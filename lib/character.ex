@@ -20,7 +20,7 @@ defmodule Character do
   end 
 
   defp select_class(roll) do
-    classes = CharacterTables.attributes_classes()
+    classes = CharacterTables.prime_requisite_classes()
     attribute =
     roll
     |> Enum.take(4)
@@ -34,7 +34,6 @@ defmodule Character do
     {attribute, _} = max_value character, {:stub, 0}     
     attribute
   end
-
 
   defp max_value([], max), do: max 
   defp max_value([{attribute, value}|t], {max_a, max_v}) do
@@ -86,15 +85,5 @@ defmodule Character do
   end
 
 
-  defp class_prime_requisite() do
-    %{fighter: :strength, 
-      wizard: :intelligence, 
-      cleric: :wisdom,  
-      thief: :dexterity
-    }
-  end
 end
 
-
-Character.roll_character 
-|> IO.inspect
