@@ -6,11 +6,20 @@ defmodule Character do
     prime_modifier = get_prime_modifier(class, roll)
     prime_bonus = get_prime_requisit_bonus(class, roll, prime_modifier)
 
+    languages = total_languages(roll)
+    mth_bonus = get_missle_to_hit_bonus(roll)
+    max_hirelings = get_max_hirelings(roll)
+    system_shock_survival = get_system_shock_survival(roll)
+
     %{attributes: roll, 
       class: class, 
       prime_modifier: prime_modifier,
-      prime_bonus:  prime_bonus
-    
+      prime_bonus:  prime_bonus,
+      total_languages: languages,
+      missile_to_hit_bonus: mth_bonus,
+      max_hirelings: max_hirelings,
+      system_shock_survival: system_shock_survival,
+      gp: (Enum.random(3..18) * 10)
     }
   end
 
@@ -84,6 +93,47 @@ defmodule Character do
     end
   end
 
+  defp total_languages(roll) do
+    int = Keyword.get roll, :intelligence   
+    max((int - 10), 0) + 1  
+  end
+
+  defp get_missle_to_hit_bonus(roll) do
+    dex = Keyword.get roll, :dexterity   
+    
+    cond do
+      dex >= 13 ->  1
+      dex >=  9 ->  0
+      dex >=  3 -> -1
+    end
+  end
+
+
+  defp get_max_hirelings(roll) do
+    cha = Keyword.get roll, :charisma   
+      
+    cond do
+      cha >=  18 ->  %{hirelings:  12, loyalty_base:  4}
+      cha >=  16 ->  %{hirelings:   6, loyalty_base:  2}
+      cha >=  13 ->  %{hirelings:   5, loyalty_base:  1}
+      cha >=  10 ->  %{hirelings:   4, loyalty_base:  0}
+      cha >=   7 ->  %{hirelings:   3, loyalty_base:  0}
+      cha >=   5 ->  %{hirelings:   2, loyalty_base: -1}
+      true       ->  %{hirelings:   1, loyalty_base: -2}
+    end
+  end
+
+  defp get_system_shock_survival(roll) do
+    con = Keyword.get roll, :constitution   
+      
+    cond do
+      con >=  15 -> %{survial: 1,   bonus_per_dice:  1}
+      con >=  13 -> %{survial: 1,   bonus_per_dice:  0}
+      con >=   9 -> %{survial: 0.9, bonus_per_dice:  0}
+      con >=   7 -> %{survial: 0.5, bonus_per_dice:  0}
+      true       -> %{survial: 0,   bonus_per_dice: -1}
+    end
+  end
 
 end
 
