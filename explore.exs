@@ -2,9 +2,16 @@ defmodule Character do
   def roll_character do
     roll = roll_attributes()
     class = roll |> select_class  
-    prime_requisit_bonus = calculate_prime_requisit_bonus(class, roll)
+    
+    prime_modifier = get_prime_modifier(class, roll)
+    prime_bonus = get_prime_requisit_bonus(class, roll, prime_modifier)
 
-    %{attributes: roll, class: class, prime_bonus: prime_requisit_bonus}
+    %{attributes: roll, 
+      class: class, 
+      prime_modifier: prime_modifier,
+      prime_bonus:  prime_bonus
+    
+    }
   end
 
   defp roll_attributes do
@@ -38,33 +45,55 @@ defmodule Character do
     end
   end
 
-  defp calculate_prime_requisit_bonus(:fighter, roll) do
+  defp get_prime_modifier(:fighter, roll) do
     int = Keyword.get roll, :intelligence      
     wis = Keyword.get roll, :wisdom      
 
     div(max((int - 9), 0), 2) + div(max((wis - 9),0), 3) 
   end
 
-  defp calculate_prime_requisit_bonus(:wizard, roll) do
+  defp get_prime_modifier(:wizard, roll) do
     wis = Keyword.get roll, :wisdom      
 
     div(max((wis - 9),0), 2)
   end
 
-  defp calculate_prime_requisit_bonus(:cleric, roll) do
+  defp get_prime_modifier(:cleric, roll) do
     str = Keyword.get roll, :strength      
     int = Keyword.get roll, :intelligence      
 
     div(max((int - 9), 0), 2) + div(max((str - 9), 0) , 3)
   end
 
-  defp calculate_prime_requisit_bonus(:thief, roll) do
+  defp get_prime_modifier(:thief, roll) do
     int = Keyword.get roll, :intelligence      
     wis = Keyword.get roll, :wisdom      
 
     div(max((int - 9),0), 2) + max((wis - 9), 0)
   end
 
+
+  defp get_prime_requisit_bonus(class, roll, bonus) do
+    attribute = Map.get(class_prime_requisite(), class) 
+    score = Keyword.get(roll, attribute) + bonus
+
+    cond do
+      score >= 15 ->  10 
+      score >= 13 ->   5
+      score >= 9  ->   0
+      score >= 7  -> -10
+      true        -> -20 
+    end
+  end
+
+
+  defp class_prime_requisite() do
+    %{fighter: :strength, 
+      wizard: :intelligence, 
+      cleric: :wisdom,  
+      thief: :dexterity
+    }
+  end
 end
 
 
