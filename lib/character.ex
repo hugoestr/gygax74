@@ -1,7 +1,9 @@
 defmodule Character do
-  def roll_character do
+  
+  
+  def roll_character(random \\ false) do
     roll = roll_attributes()
-    class = roll |> select_class  
+    class = select_class(roll, random)  
     
     prime_modifier = get_prime_modifier(class, roll)
     prime_bonus = get_prime_requisit_bonus(class, roll, prime_modifier)
@@ -28,8 +30,21 @@ defmodule Character do
     |> Enum.map(fn attribute -> {attribute, Enum.random(3..18)} end)
   end 
 
-  defp select_class(roll) do
+  defp select_class(roll, random) do
+    if random do
+      random_class()
+    else
+      optimized_class(roll) 
+    end 
+  end
+
+  defp random_class() do
+    Enum.random(CharacterTables.classes)
+  end
+
+  defp optimized_class(roll) do
     classes = CharacterTables.prime_requisite_classes()
+
     attribute =
     roll
     |> Enum.take(4)

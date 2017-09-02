@@ -1,5 +1,9 @@
 defmodule CharacterTables do
 
+  def classes() do
+    [:fighter, :wizard, :cleric, :thief]
+  end
+
   def attributes do
     [:strength, 
      :intelligence, 
@@ -21,6 +25,32 @@ defmodule CharacterTables do
       wizard: :intelligence, 
       cleric: :wisdom,  
       thief: :dexterity
+    }
+  end
+
+  def alignments() do
+    [:law,
+     :neutrality,
+     :chaos]
+  end
+
+  def races do
+    [:human, :dwarf, :elf, :hobbit]
+  end
+
+  def race_classes do
+    %{
+      human:  %{fighter:   0,
+                 wizard:   0,
+                 cleric:   0,
+                  thief:   0},
+
+      dwarf:  %{fighter:   6},
+
+      elf:    %{fighter:   4,
+                wizard:    8},
+
+      hobbit: %{fighter:   4}
     }
   end
 
